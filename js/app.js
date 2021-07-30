@@ -22,41 +22,56 @@ const datosBusqueda = {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    mostrarAutos();
+    mostrarAutos(autos);
 
     llenarSelect();
 })
 
 marca.addEventListener('change', e => {
     datosBusqueda.marca = e.target.value;
+
+    filtrarAuto();
 })
 
 year.addEventListener('change', e => {
     datosBusqueda.year = e.target.value;
+
+    filtrarAuto();
 }) 
 
 minimo.addEventListener('change', e => {
     datosBusqueda.minimo = e.target.value;
+
+    filtrarAuto();
 }) 
 
 maximo.addEventListener('change', e => {
     datosBusqueda.maximo = e.target.value;
+
+    filtrarAuto();
 }) 
 
 puertas.addEventListener('change', e => {
     datosBusqueda.puertas = e.target.value;
+
+    filtrarAuto();
 }) 
 
 transmision.addEventListener('change', e => {
     datosBusqueda.transmision = e.target.value;
+
+    filtrarAuto();
 }) 
 
 color.addEventListener('change', e => {
     datosBusqueda.color = e.target.value;
-    console.log(datosBusqueda)
+
+    filtrarAuto();
 }) 
 
-function mostrarAutos() {
+function mostrarAutos(autos) {
+    limpiarHTML();
+    
     autos.forEach(auto => {
         const {marca, modelo, color, precio, puertas, transmision, year} = auto
         const autoHTML = document.createElement('p');
@@ -74,6 +89,12 @@ function mostrarAutos() {
     })
 }
 
+function limpiarHTML() {
+    while(resultado.firstChild) {
+        resultado.removeChild(resultado.firstChild);
+    }
+}
+
 function llenarSelect() {
     for( let i=max; i>=min; i-- ) {
         const opt = document.createElement('option');
@@ -81,4 +102,85 @@ function llenarSelect() {
         opt.textContent = i;
         year.appendChild(opt)
     }
+}
+
+function filtrarAuto() {
+    const resultado = autos.filter(fitrarMarca)
+        .filter(filtrarYear)
+        .filter(filtrarMinimo)
+        .filter(filtrarMaximo)
+        .filter(filtrarPuerta)
+        .filter(filtrarColor)
+        .filter(filtrarTransmision);
+
+    if(resultado.length) {
+        mostrarAutos(resultado);
+    } else {
+        noResultado();
+    }
+}
+
+function noResultado() {
+    limpiarHTML()
+
+    const noResultado = document.createElement('div');
+    noResultado.classList.add('alerta', 'error');
+    noResultado.textContent = 'No hay resultados disponibles';
+    resultado.appendChild(noResultado)
+}
+
+function fitrarMarca(auto) {
+    const {marca} = datosBusqueda
+    if(marca) {
+        return auto.marca === marca
+    }
+    return auto;
+}
+
+function filtrarYear(auto) {
+    const {year} = datosBusqueda
+    if(year) {
+        return auto.year === parseInt(year)
+    }
+    return auto;
+}
+
+function filtrarMinimo(auto) {
+    const {minimo} = datosBusqueda
+    if(minimo) {
+        return auto.precio >= minimo
+    }
+    return auto;
+}
+
+function filtrarMaximo(auto) {
+    const {maximo} = datosBusqueda
+    if(maximo) {
+        return auto.precio <= maximo
+    }
+    return auto;
+}
+
+function filtrarPuerta(auto) {
+    const {puertas} = datosBusqueda
+    if(puertas) {
+        return auto.puertas === parseInt(puertas)
+    }
+    return auto;
+}
+
+function filtrarColor(auto) {
+    const {color} = datosBusqueda
+    if(color) {
+        return auto.color === color
+    }
+    return auto;
+}
+
+function filtrarTransmision(auto) {
+    const {transmision} = datosBusqueda
+    if(transmision) {
+        return auto.transmision === transmision
+    }
+    return auto;
 }
